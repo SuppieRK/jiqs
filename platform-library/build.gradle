@@ -1,0 +1,142 @@
+import java.nio.charset.StandardCharsets
+
+plugins {
+	// https://docs.gradle.org/current/userguide/java_library_plugin.html
+	id 'java-library'
+
+	// https://plugins.gradle.org/plugin/com.diffplug.spotless
+	id 'com.diffplug.spotless' version "$spotlessVersion"
+
+	// https://docs.gradle.org/current/userguide/jacoco_plugin.html
+	id 'jacoco'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// ===============================
+	// ===== COMMON DEPENDENCIES =====
+	// ===============================
+
+	// https://mvnrepository.com/artifact/io.javalin/javalin-bundle
+	api group: 'io.javalin', name: 'javalin-bundle', version: javalinVersion
+
+	// https://mvnrepository.com/artifact/io.javalin.community.openapi/javalin-openapi-plugin
+	api group: 'io.javalin.community.openapi', name: 'javalin-openapi-plugin', version: javalinVersion
+
+	// https://mvnrepository.com/artifact/io.javalin.community.openapi/openapi-annotation-processor
+	annotationProcessor group: 'io.javalin.community.openapi', name: 'openapi-annotation-processor', version: javalinVersion
+
+	// https://mvnrepository.com/artifact/io.javalin.community.openapi/javalin-swagger-plugin
+	api group: 'io.javalin.community.openapi', name: 'javalin-swagger-plugin', version: javalinVersion
+
+	// https://mvnrepository.com/artifact/io.github.suppierk/inject
+	api group: 'io.github.suppierk', name: 'inject', version: injectVersion
+
+	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-core
+	api group: 'com.github.gestalt-config', name: 'gestalt-core', version: gestaltVersion
+
+	// https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+	api group: 'com.zaxxer', name: 'HikariCP', version: hikariVersion
+
+	// https://mvnrepository.com/artifact/org.jooq/jooq
+	api group: 'org.jooq', name: 'jooq', version: jooqVersion
+
+	// https://mvnrepository.com/artifact/org.flywaydb/flyway-core
+	api group: 'org.flywaydb', name: 'flyway-core', version: flywayVersion
+
+	// =====================================
+	// ===== PREFERENTIAL DEPENDENCIES =====
+	// =====================================
+
+	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-yaml
+	api group: 'com.github.gestalt-config', name: 'gestalt-yaml', version: gestaltVersion
+
+	// https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql
+	api group: 'org.flywaydb', name: 'flyway-database-postgresql', version: flywayVersion
+
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	api group: 'org.postgresql', name: 'postgresql', version: postgresVersion
+
+	// https://mvnrepository.com/artifact/com.github.f4b6a3/uuid-creator
+	api group: 'com.github.f4b6a3', name: 'uuid-creator', version: uuidCreatorVersion
+
+	// =============================
+	// ===== TEST DEPENDENCIES =====
+	// =============================
+
+	// https://mvnrepository.com/artifact/org.junit/junit-bom
+	api platform(group: 'org.junit', name: 'junit-bom', version: junitVersion)
+
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
+	api group: 'org.junit.jupiter', name: 'junit-jupiter'
+
+	// ==========================================
+	// ===== PREFERENTIAL TEST DEPENDENCIES =====
+	// ==========================================
+
+	// https://mvnrepository.com/artifact/org.testcontainers/postgresql
+	api group: 'org.testcontainers', name: 'postgresql', version: testcontainersVersion
+
+	// https://mvnrepository.com/artifact/nl.jqno.equalsverifier/equalsverifier-nodep
+	api group: 'nl.jqno.equalsverifier', name: 'equalsverifier-nodep', version: equalsVerifierVersion
+}
+
+java {
+	sourceCompatibility = javaVersion
+	targetCompatibility = javaVersion
+
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(javaVersion)
+	}
+}
+
+// Enable Spotless code formatting rules
+// https://github.com/diffplug/spotless/tree/main/plugin-gradle
+spotless {
+	java {
+		target '**/*.java'
+
+		// Aligns with Intellij IDEA default settings
+		toggleOffOn('@formatter:off', '@formatter:on')
+
+		googleJavaFormat()
+	}
+
+	groovyGradle {
+		target '**/*.gradle'
+
+		greclipse()
+	}
+}
+
+test {
+	dependsOn spotlessCheck
+	finalizedBy jacocoTestReport
+
+	useJUnitPlatform()
+}
+
+jacocoTestReport {
+	// Tests are required to run before generating the report
+	dependsOn test
+
+	reports {
+		html.required = true
+		xml.required = true
+		csv.required = false
+	}
+}
+
+// Configure several tasks additionally for Gradle
+tasks.withType(Copy).configureEach {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = StandardCharsets.UTF_8.name()
+
+	dependsOn 'spotlessApply'
+}

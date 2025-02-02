@@ -1,0 +1,99 @@
+plugins {
+	id 'groovy'
+
+	id 'java-gradle-plugin'
+
+	// https://plugins.gradle.org/plugin/com.gradle.plugin-publish
+	id 'com.gradle.plugin-publish' version "$gradlePluginPublishVersion"
+
+	// https://plugins.gradle.org/plugin/org.nosphere.gradle.github.actions
+	id 'org.nosphere.gradle.github.actions' version "$gradleGithubActions"
+
+	// https://plugins.gradle.org/plugin/com.diffplug.spotless
+	id 'com.diffplug.spotless' version "$spotlessVersion"
+}
+
+def functionalTest = sourceSets.create('functionalTest')
+
+def functionalTestTask = tasks.register('functionalTest', Test) {
+	group = 'verification'
+	testClassesDirs = functionalTest.output.classesDirs
+	classpath = functionalTest.runtimeClasspath
+}
+
+tasks.named('check') {
+	dependsOn functionalTestTask
+}
+
+gradlePlugin {
+	website = 'https://github.com/SuppieRK/jiqs/platform-plugin'
+	vcsUrl = 'https://github.com/SuppieRK/jiqs/platform-plugin'
+
+	plugins.register('platform-plugin') {
+		id = 'platform-plugin'
+		implementationClass = 'platform.plugin.PlatformPlugin'
+
+		displayName = 'Platform Plugin'
+		description = 'Ensures common best practices across subprojects'
+		tags = [
+			'best-practices',
+			'database',
+			'jooq',
+			'database',
+			'flyway',
+			'docker'
+		]
+	}
+
+	testSourceSets functionalTest
+}
+
+repositories {
+	gradlePluginPortal()
+	mavenCentral()
+}
+
+dependencies {
+	// ====================
+	// Exposed plugin dependencies
+
+	// https://plugins.gradle.org/plugin/io.github.suppierk.jooq-java-class-generator
+	api group: "io.github.suppierk.jooq-java-class-generator", name: "io.github.suppierk.jooq-java-class-generator.gradle.plugin", version: jooqJavaClassGeneratorVersion
+
+	// https://plugins.gradle.org/plugin/com.diffplug.spotless
+	api group: "com.diffplug.spotless", name: "com.diffplug.spotless.gradle.plugin", version: spotlessVersion
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+}
+
+java {
+	sourceCompatibility = javaVersion
+	targetCompatibility = javaVersion
+
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(javaVersion)
+	}
+}
+
+// Enable Spotless code formatting rules
+// https://github.com/diffplug/spotless/tree/main/plugin-gradle
+spotless {
+	java {
+		target '**/*.java'
+
+		// Aligns with Intellij IDEA default settings
+		toggleOffOn('@formatter:off', '@formatter:on')
+
+		googleJavaFormat()
+	}
+
+	groovyGradle {
+		target '**/*.gradle'
+
+		greclipse()
+	}
+}
+
+compileJava.dependsOn 'spotlessApply'

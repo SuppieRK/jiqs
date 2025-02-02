@@ -1,0 +1,7 @@
+name: test
+port: 8080
+
+database:
+  url: test
+  username: test
+  password: test

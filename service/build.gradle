@@ -1,0 +1,66 @@
+import java.nio.charset.StandardCharsets
+
+plugins {
+    id 'platform-plugin'
+
+    id 'jacoco'
+
+    // https://plugins.gradle.org/plugin/com.google.cloud.tools.jib
+    id 'com.google.cloud.tools.jib' version "$jibVersion"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Add more dependencies as your service needs!
+}
+
+platform {
+    generatedDatabaseClassesPackage = "service.db"
+}
+
+java {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
+}
+
+test {
+    dependsOn spotlessCheck
+    finalizedBy jacocoTestReport
+
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    // Tests are required to run before generating the report
+    dependsOn test
+
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = false
+    }
+}
+
+// Configure several tasks additionally for Gradle
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = StandardCharsets.UTF_8.name()
+
+    dependsOn 'spotlessApply'
+}
+
+jib {
+    from {
+        image = "eclipse-temurin:$javaVersion-alpine"
+    }
+}

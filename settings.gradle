@@ -1,1 +1,5 @@
 rootProject.name = 'jiqs'
+
+includeBuild 'platform-plugin'
+includeBuild 'platform-library'
+includeBuild 'service'
