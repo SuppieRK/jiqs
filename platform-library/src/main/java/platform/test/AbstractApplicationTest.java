@@ -19,8 +19,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import platform.ApplicationWrapper;
-import platform.dependencies.GestaltProvider;
+import platform.contracts.ConfigurationReader;
+import platform.dependencies.ConfigurationReaderProvider;
 
+/** Wraps PostgreSQL TestContainer to verify the application against real PostgreSQL instance. */
 public abstract class AbstractApplicationTest {
   private static final PostgreSQLContainer<?> POSTGRESQL =
       new PostgreSQLContainer<>("postgres:16-alpine");
@@ -66,21 +68,40 @@ public abstract class AbstractApplicationTest {
     POSTGRESQL.stop();
   }
 
+  /**
+   * Re-wraps initial {@link ApplicationWrapper} making sure that it uses our TestContainers
+   * database.
+   *
+   * @param applicationWrapper to modify
+   * @return initial {@link ApplicationWrapper} with replaced database connection properties
+   */
   protected static ApplicationWrapper useTestDatabase(ApplicationWrapper applicationWrapper) {
     return applicationWrapper
         .modifyDependencies()
-        .replace(GestaltProvider.class, TestGestaltProvider.class)
+        .replace(ConfigurationReaderProvider.class, TestConfigurationReaderProvider.class)
         .build();
   }
 
+  /**
+   * @return jOOQ {@link DSLContext} to be used in tests independently from {@link
+   *     ApplicationWrapper} context to be able to perform the necessary operations like truncating
+   *     tables.
+   */
   protected static DSLContext testDsl() {
     return dsl;
   }
 
+  /**
+   * An override of the {@link ConfigurationReaderProvider} for tests, enabling us to create {@link
+   * #useTestDatabase(ApplicationWrapper)} functionality.
+   *
+   * <p><b>NOTE</b>: we still have to load an initial configuration file here to pull in other
+   * configurations, except the database.
+   */
   @Singleton
-  static class TestGestaltProvider extends GestaltProvider {
+  static class TestConfigurationReaderProvider extends ConfigurationReaderProvider {
     @Override
-    public Gestalt gestalt() throws GestaltException {
+    public ConfigurationReader configurationReader() throws Exception {
       final ConfigSourcePackage configSourcePackage =
           MapConfigSourceBuilder.builder()
               .addCustomConfig("database.url", POSTGRESQL.getJdbcUrl())
@@ -91,11 +112,22 @@ public abstract class AbstractApplicationTest {
       final Gestalt gestalt =
           new GestaltBuilder()
               .addSource(
-                  ClassPathConfigSourceBuilder.builder().setResource("application.yml").build())
+                  ClassPathConfigSourceBuilder.builder().setResource(CONFIGURATION_FILE).build())
               .addSource(configSourcePackage)
               .build();
+
       gestalt.loadConfigs();
-      return gestalt;
+
+      return new ConfigurationReader() {
+        @Override
+        public <T> T read(String path, Class<T> clazz) {
+          try {
+            return gestalt.getConfig(path, clazz);
+          } catch (GestaltException e) {
+            throw new IllegalStateException(e);
+          }
+        }
+      };
     }
   }
 }

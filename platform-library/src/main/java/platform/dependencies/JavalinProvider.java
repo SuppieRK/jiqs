@@ -13,6 +13,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import platform.primitives.ApplicationName;
 
+/**
+ * Everything necessary for the web server in the app.
+ *
+ * <p>This class is {@code final} which prohibits its replacement in the {@link
+ * io.github.suppierk.inject.Injector} exposed to the consumers.
+ */
 @Singleton
 public final class JavalinProvider implements AutoCloseable {
   private final ApplicationName applicationName;
@@ -21,6 +27,16 @@ public final class JavalinProvider implements AutoCloseable {
 
   private final Javalin javalin;
 
+  /**
+   * Default constructor.
+   *
+   * <p>In this particular case, unlike {@link JacksonProvider} we need internal state to be able to
+   * close web server.
+   *
+   * @param applicationName to set in Swagger API
+   * @param javalinJackson to use during requests / responses handling
+   * @param injector to find {@link EndpointGroup}s to register in the web server
+   */
   @Inject
   public JavalinProvider(
       ApplicationName applicationName, JavalinJackson javalinJackson, Injector injector) {
@@ -35,6 +51,9 @@ public final class JavalinProvider implements AutoCloseable {
     this.javalin = initializeJavalin();
   }
 
+  /**
+   * @return the web server instance to start and test
+   */
   @Provides
   @Singleton
   @SuppressWarnings("unused")
@@ -42,11 +61,17 @@ public final class JavalinProvider implements AutoCloseable {
     return javalin;
   }
 
+  /** This will allow {@link Injector} to automatically shut down the web server */
   @Override
   public void close() {
     javalin.stop();
   }
 
+  /**
+   * Abstracting away the logic to instantiate {@link Javalin} web server.
+   *
+   * @return fully initialized {@link Javalin} instance
+   */
   private Javalin initializeJavalin() {
     return Javalin.create(
         config -> {
