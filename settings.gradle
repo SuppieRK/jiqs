@@ -1,5 +1,6 @@
 rootProject.name = 'jiqs'
 
+// This definition allows further decoupling
 includeBuild 'platform-plugin'
 includeBuild 'platform-library'
 includeBuild 'service'

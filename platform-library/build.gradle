@@ -32,12 +32,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.javalin.community.openapi/javalin-swagger-plugin
 	api group: 'io.javalin.community.openapi', name: 'javalin-swagger-plugin', version: javalinVersion
 
-	// https://mvnrepository.com/artifact/io.github.suppierk/inject
-	api group: 'io.github.suppierk', name: 'inject', version: injectVersion
-
-	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-core
-	api group: 'com.github.gestalt-config', name: 'gestalt-core', version: gestaltVersion
-
 	// https://mvnrepository.com/artifact/com.zaxxer/HikariCP
 	api group: 'com.zaxxer', name: 'HikariCP', version: hikariVersion
 
@@ -50,6 +44,12 @@ dependencies {
 	// =====================================
 	// ===== PREFERENTIAL DEPENDENCIES =====
 	// =====================================
+
+	// https://mvnrepository.com/artifact/io.github.suppierk/inject
+	api group: 'io.github.suppierk', name: 'inject', version: injectVersion
+
+	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-core
+	api group: 'com.github.gestalt-config', name: 'gestalt-core', version: gestaltVersion
 
 	// https://mvnrepository.com/artifact/com.github.gestalt-config/gestalt-yaml
 	api group: 'com.github.gestalt-config', name: 'gestalt-yaml', version: gestaltVersion

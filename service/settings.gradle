@@ -1,4 +1,5 @@
 rootProject.name = 'service'
 
+// Refers to platform projects which allows further decoupling, if needed
 includeBuild '../platform-plugin'
 includeBuild '../platform-library'

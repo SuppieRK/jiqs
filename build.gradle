@@ -1,7 +1,9 @@
+// For this template purpose it makes sense to define these plugins here
+// TODO do not forget to include this plugins when decoupling template modules into their own repositories
 allprojects {
-	// https://docs.gradle.org/current/userguide/idea_plugin.html
-	apply plugin: 'idea'
+    // https://docs.gradle.org/current/userguide/idea_plugin.html
+    apply plugin: 'idea'
 
-	// https://docs.gradle.org/current/userguide/java_plugin.html
-	apply plugin: 'java'
+    // https://docs.gradle.org/current/userguide/java_plugin.html
+    apply plugin: 'java'
 }

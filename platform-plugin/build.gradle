@@ -54,11 +54,16 @@ repositories {
 }
 
 dependencies {
-	// ====================
-	// Exposed plugin dependencies
+	// ===============================
+	// ===== COMMON DEPENDENCIES =====
+	// ===============================
 
 	// https://plugins.gradle.org/plugin/io.github.suppierk.jooq-java-class-generator
 	api group: "io.github.suppierk.jooq-java-class-generator", name: "io.github.suppierk.jooq-java-class-generator.gradle.plugin", version: jooqJavaClassGeneratorVersion
+
+	// =====================================
+	// ===== PREFERENTIAL DEPENDENCIES =====
+	// =====================================
 
 	// https://plugins.gradle.org/plugin/com.diffplug.spotless
 	api group: "com.diffplug.spotless", name: "com.diffplug.spotless.gradle.plugin", version: spotlessVersion

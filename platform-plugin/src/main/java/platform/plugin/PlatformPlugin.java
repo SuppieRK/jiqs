@@ -80,6 +80,8 @@ public class PlatformPlugin implements Plugin<Project> {
               .add(
                   "implementation",
                   "io.github.suppierk:platform-library:%s".formatted(PLATFORM_LIBRARY_VERSION));
+
+          // Registering additional database-specific dependency for jOOQ class generator
           root.getDependencies()
               .add("jooqGenerator", "org.postgresql:postgresql:%s".formatted(POSTGRESQL_VERSION));
 

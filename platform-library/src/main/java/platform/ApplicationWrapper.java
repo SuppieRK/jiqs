@@ -4,11 +4,7 @@ import io.github.suppierk.inject.Injector;
 import io.github.suppierk.utils.Memoized;
 import io.javalin.Javalin;
 import java.io.Closeable;
-import platform.dependencies.ConfigurationProvider;
-import platform.dependencies.ConfigurationReaderProvider;
-import platform.dependencies.JacksonProvider;
-import platform.dependencies.JavalinProvider;
-import platform.dependencies.JooqProvider;
+import platform.dependencies.*;
 import platform.endpoints.HealthcheckEndpointGroup;
 import platform.primitives.ServerPort;
 

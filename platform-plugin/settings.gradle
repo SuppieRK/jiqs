@@ -1,3 +1,4 @@
 rootProject.name = 'platform-plugin'
 
+// Refers to a platform library project which allows further decoupling, if needed
 includeBuild '../platform-library'

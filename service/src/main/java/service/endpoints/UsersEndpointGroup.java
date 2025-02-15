@@ -10,12 +10,7 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
-import io.javalin.openapi.HttpMethod;
-import io.javalin.openapi.OpenApi;
-import io.javalin.openapi.OpenApiContent;
-import io.javalin.openapi.OpenApiParam;
-import io.javalin.openapi.OpenApiRequestBody;
-import io.javalin.openapi.OpenApiResponse;
+import io.javalin.openapi.*;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.Map;
@@ -24,6 +19,11 @@ import service.models.requests.UserRequest;
 import service.models.responses.UserResponse;
 import service.services.UsersService;
 
+/**
+ * This is essentially a controller, which defines endpoints to manipulate data in the app.
+ *
+ * <p>Be careful with business logic, as this class also defines a lot of OpenAPI annotations.
+ */
 @Singleton
 public class UsersEndpointGroup implements EndpointGroup, CrudHandler {
   private static final String USER_ID = "userId";
@@ -32,16 +32,26 @@ public class UsersEndpointGroup implements EndpointGroup, CrudHandler {
 
   private final UsersService service;
 
+  /**
+   * Default constructor.
+   *
+   * <p>Because of the way how {@link io.github.suppierk.inject.Injector} is implemented,
+   * constructor parameter will never be {@code null}.
+   *
+   * @param service to invoke database operations.
+   */
   @Inject
   public UsersEndpointGroup(UsersService service) {
     this.service = service;
   }
 
+  /** {@inheritDoc} */
   @Override
   public void addEndpoints() {
     crud(SINGULAR_USER_ENDPOINT, this);
   }
 
+  /** {@inheritDoc} */
   @Override
   @OpenApi(
       summary = "Create new user",
@@ -59,6 +69,7 @@ public class UsersEndpointGroup implements EndpointGroup, CrudHandler {
     context.json(response);
   }
 
+  /** {@inheritDoc} */
   @Override
   @OpenApi(
       summary = "Get all users",
@@ -73,6 +84,7 @@ public class UsersEndpointGroup implements EndpointGroup, CrudHandler {
     context.json(service.getAll());
   }
 
+  /** {@inheritDoc} */
   @Override
   @OpenApi(
       summary = "Get user by ID",
@@ -109,6 +121,7 @@ public class UsersEndpointGroup implements EndpointGroup, CrudHandler {
     context.json(response);
   }
 
+  /** {@inheritDoc} */
   @Override
   @OpenApi(
       summary = "Update user by ID",
@@ -147,6 +160,7 @@ public class UsersEndpointGroup implements EndpointGroup, CrudHandler {
     context.json(response);
   }
 
+  /** {@inheritDoc} */
   @Override
   @OpenApi(
       summary = "Delete user by ID",

@@ -7,8 +7,11 @@ import java.util.StringJoiner;
 public record UserRequest(String username, char[] password) {
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof UserRequest that)) return false;
-    return Objects.equals(username, that.username) && Objects.deepEquals(password, that.password);
+    if (!(o instanceof UserRequest(String thatUsername, char[] thatPassword))) {
+      return false;
+    }
+
+    return Objects.equals(username, thatUsername) && Objects.deepEquals(password, thatPassword);
   }
 
   @Override
