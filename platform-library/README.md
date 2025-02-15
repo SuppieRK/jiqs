@@ -35,6 +35,7 @@ Typically, this library should define the most generic and general components fo
       a set of libraries from [Avaje](https://avaje.io/inject/).
 - [Gestalt](https://gestalt-config.github.io/gestalt/) as a customizable configuration library:
     - Alternatively you can directly read and parse configuration file using Jackson / SnakeYaml to reduce clutter.
+- [Javalin Swagger](https://javalin.io/tutorials/openapi-example) to provide API documentation for consumers.
 
 ### Code health
 
