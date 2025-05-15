@@ -11,7 +11,7 @@ import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Test;
 import platform.test.AbstractApplicationTest;
 
-public class ApplicationWrapperTest extends AbstractApplicationTest {
+class ApplicationWrapperTest extends AbstractApplicationTest {
   @Singleton
   static class CustomEndpoints implements EndpointGroup {
     @Override

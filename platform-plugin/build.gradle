@@ -100,5 +100,3 @@ spotless {
 		greclipse()
 	}
 }
-
-compileJava.dependsOn 'spotlessApply'

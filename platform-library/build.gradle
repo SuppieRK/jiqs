@@ -73,6 +73,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
 	api group: 'org.junit.jupiter', name: 'junit-jupiter'
 
+	// See https://youtrack.jetbrains.com/issue/IDEA-370750/Idea-is-incompatible-with-JUnit-5.12
+	testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher'
+
 	// ==========================================
 	// ===== PREFERENTIAL TEST DEPENDENCIES =====
 	// ==========================================
@@ -137,6 +140,4 @@ tasks.withType(Copy).configureEach {
 
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = StandardCharsets.UTF_8.name()
-
-	dependsOn 'spotlessApply'
 }

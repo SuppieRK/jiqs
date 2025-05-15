@@ -18,11 +18,13 @@ import org.gradle.api.plugins.JavaPlugin;
 @SuppressWarnings("unused")
 public class PlatformPlugin implements Plugin<Project> {
   private static final String PLATFORM_LIBRARY_VERSION = "0.0.1";
-  private static final String JOOQ_VERSION = "3.19.16";
-  private static final String POSTGRESQL_VERSION = "42.7.4";
+  private static final String JOOQ_VERSION = "3.20.3";
+  private static final String POSTGRESQL_VERSION = "42.7.5";
 
   /** Default constructor. */
-  public PlatformPlugin() {}
+  public PlatformPlugin() {
+    // No operations required
+  }
 
   @Override
   public void apply(Project root) {
